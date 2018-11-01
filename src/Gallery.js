@@ -28,7 +28,8 @@ export default class Gallery extends PureComponent {
         errorComponent: PropTypes.func,
         flatListProps: PropTypes.object,
         onLoad: PropTypes.func,
-        onLoadStart: PropTypes.func
+        onLoadStart: PropTypes.func,
+        resizeMode: PropTypes.string
     };
 
     static defaultProps = {
@@ -239,7 +240,8 @@ export default class Gallery extends PureComponent {
             onError,
             onLoad,
             onLoadEnd,
-            onLoadStart
+            onLoadStart,
+            resizeMode
         } = this.props;
         
         return (
@@ -248,6 +250,7 @@ export default class Gallery extends PureComponent {
                 onLoad={onLoad}
                 onLoadEnd={onLoadEnd}
                 onLoadStart={onLoadStart}
+                resizeMode={resizeMode}
                 onViewTransformed={((transform) => {
                     onViewTransformed && onViewTransformed(transform, pageId);
                 })}
