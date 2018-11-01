@@ -26,7 +26,9 @@ export default class Gallery extends PureComponent {
         removeClippedSubviews: PropTypes.bool,
         imageComponent: PropTypes.func,
         errorComponent: PropTypes.func,
-        flatListProps: PropTypes.object
+        flatListProps: PropTypes.object,
+        onLoad: PropTypes.func,
+        onLoadStart: PropTypes.func
     };
 
     static defaultProps = {
@@ -229,21 +231,35 @@ export default class Gallery extends PureComponent {
     }
 
     renderPage (pageData, pageId) {
-        const { onViewTransformed, onTransformGestureReleased, errorComponent, imageComponent } = this.props;
+        const {
+            onViewTransformed,
+            onTransformGestureReleased,
+            errorComponent,
+            imageComponent,
+            onError,
+            onLoad,
+            onLoadEnd,
+            onLoadStart
+        } = this.props;
+        
         return (
             <TransformableImage
-              onViewTransformed={((transform) => {
-                  onViewTransformed && onViewTransformed(transform, pageId);
-              })}
-              onTransformGestureReleased={((transform) => {
-                  // need the 'return' here because the return value is checked in ViewTransformer
-                  return onTransformGestureReleased && onTransformGestureReleased(transform, pageId);
-              })}
-              ref={((ref) => { this.imageRefs.set(pageId, ref); })}
-              key={'innerImage#' + pageId}
-              errorComponent={errorComponent}
-              imageComponent={imageComponent}
-              image={pageData}
+                onError={onError}
+                onLoad={onLoad}
+                onLoadEnd={onLoadEnd}
+                onLoadStart={onLoadStart}
+                onViewTransformed={((transform) => {
+                    onViewTransformed && onViewTransformed(transform, pageId);
+                })}
+                onTransformGestureReleased={((transform) => {
+                    // need the 'return' here because the return value is checked in ViewTransformer
+                    return onTransformGestureReleased && onTransformGestureReleased(transform, pageId);
+                })}
+                ref={((ref) => { this.imageRefs.set(pageId, ref); })}
+                key={'innerImage#' + pageId}
+                errorComponent={errorComponent}
+                imageComponent={imageComponent}
+                image={pageData}
             />
         );
     }
