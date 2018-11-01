@@ -20,6 +20,7 @@ export default class ViewTransformer extends React.Component {
         onViewTransformed: PropTypes.func,
         onTransformGestureReleased: PropTypes.func,
         onSingleTapConfirmed: PropTypes.func,
+        onDoubleTapConfirmed: PropTypes.func,
         onLayout: PropTypes.func,
         onTransformStart: PropTypes.func,
         children: PropTypes.node
@@ -107,6 +108,9 @@ export default class ViewTransformer extends React.Component {
             onResponderTerminationRequest: (evt, gestureState) => false, // Do not allow parent view to intercept gesture
             onResponderSingleTapConfirmed: (evt, gestureState) => {
                 this.props.onSingleTapConfirmed && this.props.onSingleTapConfirmed();
+            },
+            onResponderDoubleTapConfirmed: (evt, gestureState) => {
+                this.props.onDoubleTapConfirmed && this.props.onDoubleTapConfirmed();
             }
         });
     }
@@ -231,6 +235,9 @@ export default class ViewTransformer extends React.Component {
         }
 
         if (gestureState.doubleTapUp) {
+            // if (this.props.onDoubleTapConfirmed) {
+            //     this.props.onDoubleTapConfirmed && this.props.onDoubleTapConfirmed();
+            // }
             if (!this.props.enableScale) {
                 this.animateBounce();
                 return;

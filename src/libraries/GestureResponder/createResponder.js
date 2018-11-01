@@ -99,6 +99,13 @@ function cancelSingleTapConfirm (gestureState) {
     }
 }
 
+function cancelDoubleTapConfirm (gestureState) {
+    if (typeof gestureState._doubleTapConfirmId !== 'undefined') {
+        TimerMixin.clearTimeout(gestureState._doubleTapConfirmId);
+        gestureState._doubleTapConfirmId = undefined;
+    }
+}
+
 /**
  * The config object contains same callbacks as the default gesture responder(https://facebook.github.io/react-native/docs/gesture-responder-system.html).
  * And every callback are called with an additional argument 'gestureState', like PanResponder.
@@ -131,6 +138,7 @@ export default function create (config) {
         onStartShouldSetResponder: function (e) {
             DEV && console.log('onStartShouldSetResponder...');
             cancelSingleTapConfirm(gestureState);
+            cancelDoubleTapConfirm(gestureState);
             return config.onStartShouldSetResponder ?
         config.onStartShouldSetResponder(e, gestureState) :
         false;
@@ -145,6 +153,7 @@ export default function create (config) {
         onStartShouldSetResponderCapture: function (e) {
             DEV && console.log('onStartShouldSetResponderCapture...');
             cancelSingleTapConfirm(gestureState);
+            cancelDoubleTapConfirm(gestureState);
       // TODO: Actually, we should reinitialize the state any time
       // touches.length increases from 0 active to > 0 active.
             if (e.nativeEvent.touches.length === 1) {
@@ -174,6 +183,7 @@ export default function create (config) {
         onResponderGrant: function (e) {
             DEV && console.log('onResponderGrant...');
             cancelSingleTapConfirm(gestureState);
+            cancelDoubleTapConfirm(gestureState);
             if (!interactionState.handle) {
                 interactionState.handle = InteractionManager.createInteractionHandle();
             }
@@ -216,6 +226,18 @@ export default function create (config) {
                     }
                   }, TAP_UP_TIME_THRESHOLD);
                     gestureState._singleTapConfirmId = timeoutId;
+                }
+
+                // schedule to confirm double tap
+                if (gestureState.doubleTapUp) {
+                    const snapshot = Object.assign({}, gestureState);
+                    const timeoutId = TimerMixin.setTimeout(() => {
+                      if (gestureState._doubleTapConfirmId === timeoutId) {
+                        DEV && console.log('onResponderDoubleTapConfirmed...');
+                        config.onResponderDoubleTapConfirmed && config.onResponderDoubleTapConfirmed(e, snapshot);
+                    }
+                  }, TAP_UP_TIME_THRESHOLD);
+                    gestureState._doubleTapConfirmId = timeoutId;
                 }
             }
             gestureState._lastReleaseTimestamp = e.touchHistory.mostRecentTimeStamp;

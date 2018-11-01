@@ -20,6 +20,7 @@ export default class Gallery extends PureComponent {
         onPageScrollStateChanged: PropTypes.func,
         onPageScroll: PropTypes.func,
         onSingleTapConfirmed: PropTypes.func,
+        onDoubleTapConfirmed: PropTypes.func,
         onGalleryStateChanged: PropTypes.func,
         onLongPress: PropTypes.func,
         removeClippedSubviews: PropTypes.bool,
@@ -108,6 +109,9 @@ export default class Gallery extends PureComponent {
             onResponderTerminationRequest: (evt, gestureState) => false, // Do not allow parent view to intercept gesture
             onResponderSingleTapConfirmed: (evt, gestureState) => {
                 this.props.onSingleTapConfirmed && this.props.onSingleTapConfirmed(this.currentPage);
+            },
+            onResponderDoubleTapConfirmed: (evt, gestureState) => {
+                this.props.onDoubleTapConfirmed && this.props.onDoubleTapConfirmed(this.currentPage);
             }
         });
 
